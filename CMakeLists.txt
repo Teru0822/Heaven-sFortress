@@ -142,4 +142,14 @@ endif()
 install(TARGETS HeavensFortressClient HeavensFortressServer DESTINATION bin)
 install(DIRECTORY config DESTINATION .)
 
+if(WIN32)
+    install(FILES $<TARGET_FILE:SDL2::SDL2> 
+                  $<TARGET_FILE:SDL2_mixer::SDL2_mixer> 
+                  $<TARGET_FILE:GLEW::GLEW> 
+            DESTINATION bin)
+    if(TARGET freeglut::freeglut)
+         install(FILES $<TARGET_FILE:freeglut::freeglut> DESTINATION bin)
+    endif()
+endif()
+
 include(CPack)
