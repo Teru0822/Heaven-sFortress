@@ -42,7 +42,7 @@ jobs:
             ${{ matrix.os == 'macos-latest' && '-DOpenMP_ROOT=$(brew --prefix libomp)' || '' }}
 
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --build build --config Release --verbose
 
       - name: Package
         run: |
