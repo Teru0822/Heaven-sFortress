@@ -6,6 +6,9 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build on ${{ matrix.os }}
@@ -28,6 +31,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           vcpkg install sdl2 sdl2-mixer glew freeglut
+          choco install nsis
 
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
@@ -66,10 +70,14 @@ jobs:
         with:
           path: artifacts
 
-      - name: Zip Artifacts (Optional)
+      - name: Display structure of downloaded files
+        run: ls -R artifacts
+
+      - name: Prepare Release Files
         run: |
           mkdir release
-          find artifacts -name "HeavensFortress*" -exec cp {} release/ \;
+          # Move files from subdirectories (created by download-artifact) to a single release folder
+          find artifacts -type f \( -name "HeavensFortress*" -o -name "*.exe" -o -name "*.dmg" -o -name "*.tar.gz" -o -name "*.deb" \) -exec cp {} release/ \;
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
