@@ -87,24 +87,6 @@ if(WIN32)
     target_compile_definitions(HeavensFortressClient PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS FREEGLUT_LIB_PRAGMAS=0 SDL_MAIN_HANDLED)
     # Suppress truncation and conversion warnings
     target_compile_options(HeavensFortressClient PRIVATE /wd4244 /wd4305 /wd4996 /wd5208 /wd4267)
-
-    # Copy DLLs to output directory
-    # Copy DLLs to output directory
-    add_custom_command(TARGET HeavensFortressClient POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:SDL2::SDL2>
-            $<TARGET_FILE:SDL2_mixer::SDL2_mixer>
-            $<TARGET_FILE:GLEW::GLEW>
-            $<TARGET_FILE_DIR:HeavensFortressClient>
-    )
-
-    if(TARGET freeglut::freeglut)
-        add_custom_command(TARGET HeavensFortressClient POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                $<TARGET_FILE:freeglut::freeglut>
-                $<TARGET_FILE_DIR:HeavensFortressClient>
-        )
-    endif()
 endif()
 
 # --- Server ---
@@ -142,13 +124,42 @@ endif()
 install(TARGETS HeavensFortressClient HeavensFortressServer DESTINATION bin)
 install(DIRECTORY config DESTINATION .)
 
+# Install rules
+install(TARGETS HeavensFortressClient HeavensFortressServer DESTINATION bin)
+install(DIRECTORY config DESTINATION .)
+
 if(WIN32)
-    install(FILES $<TARGET_FILE:SDL2::SDL2> 
-                  $<TARGET_FILE:SDL2_mixer::SDL2_mixer> 
-                  $<TARGET_FILE:GLEW::GLEW> 
-            DESTINATION bin)
-    if(TARGET freeglut::freeglut)
-         install(FILES $<TARGET_FILE:freeglut::freeglut> DESTINATION bin)
+    # Attempt to find the directory containing runtime DLLs from SDL2_mixer target
+    get_target_property(SDL2_MIXER_LIB SDL2_mixer::SDL2_mixer IMPORTED_LOCATION_RELEASE)
+    if(NOT SDL2_MIXER_LIB)
+        get_target_property(SDL2_MIXER_LIB SDL2_mixer::SDL2_mixer IMPORTED_LOCATION)
+    endif()
+
+    if(SDL2_MIXER_LIB)
+        get_filename_component(DLL_SEARCH_DIR "${SDL2_MIXER_LIB}" DIRECTORY)
+        message(STATUS "Searching for DLLs in: ${DLL_SEARCH_DIR}")
+        
+        # Glob all DLLs in dependency directory (catch wavpack, vorbis, etc.)
+        file(GLOB ALL_DEP_DLLS "${DLL_SEARCH_DIR}/*.dll")
+        
+        # Install all found DLLs
+        install(FILES ${ALL_DEP_DLLS} DESTINATION bin)
+        
+        # Copy for local run
+        foreach(DLL_FILE ${ALL_DEP_DLLS})
+             add_custom_command(TARGET HeavensFortressClient POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${DLL_FILE}"
+                $<TARGET_FILE_DIR:HeavensFortressClient>
+            )
+        endforeach()
+    else()
+        # Fallback if target property fails (unlikely with vcpkg)
+        message(WARNING "Could not determine SDL2_mixer DLL path. Falling back to explicit list.")
+        install(FILES $<TARGET_FILE:SDL2::SDL2> 
+                      $<TARGET_FILE:SDL2_mixer::SDL2_mixer> 
+                      $<TARGET_FILE:GLEW::GLEW> 
+                DESTINATION bin)
     endif()
 endif()
 
