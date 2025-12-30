@@ -543,7 +543,7 @@ void scene8(int x, int y, int w, int h)
 	escape3.make(0.164149f,0.800339f,0.0f);
 	glPopMatrix();
 
-	bool near = false;
+	bool isNear = false;
 
 	if(search_item_cheap() == true)
 	{
@@ -558,7 +558,7 @@ void scene8(int x, int y, int w, int h)
 			glPopMatrix();
 
 			can_get = 1;
-			near = true;
+			isNear = true;
 		}
 		glPushMatrix();
 		glTranslatef(-39.0272f,-39.9068f,7.13109f);
@@ -581,7 +581,7 @@ void scene8(int x, int y, int w, int h)
 			glPopMatrix();
 
 			can_get = 5;
-			near = true;
+			isNear = true;
 		}
 		glPushMatrix();
 		glTranslatef(37.366f,20.9312f,7.40035f);
@@ -604,7 +604,7 @@ void scene8(int x, int y, int w, int h)
 			glPopMatrix();
 
 			can_get = 3;
-			near = true;
+			isNear = true;
 		}
 
 		glPushMatrix();
@@ -615,7 +615,7 @@ void scene8(int x, int y, int w, int h)
 		glPopMatrix();
 	}
 
-	if(near == false)
+	if(isNear == false)
 	{
 		can_get = 0;
 	}
