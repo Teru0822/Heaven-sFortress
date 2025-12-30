@@ -162,7 +162,7 @@ struct Game
 	uint8_t havingItems[4];//1,3,5,(4),(6),(8),(9)
 };
 
-typedef struct {
+struct CONTAINER {
     uint8_t cid;
 	char name[10];
     char command = 0;
@@ -171,7 +171,7 @@ typedef struct {
 	struct Game game[4];
 	uint8_t result[30];
 	uint8_t eneDamage[4];
-} CONTAINER;
+};
 
 struct movingCharPosition {
     Position pos;

@@ -16,7 +16,11 @@ static CLIENT clients[MAX_NUM_CLIENTS];
 static int num_clients;
 static fd_set mask;
 static CONTAINER data;
+#ifdef _WIN32
+static SOCKET sock; // UDPソケットをグローバルに定義
+#else
 static int sock; // UDPソケットをグローバルに定義
+#endif
 
 void setup_server(int, u_short);
 int control_requests();
@@ -190,12 +194,12 @@ static void send_data(int cid, void *data, int size, struct sockaddr_in *addr)
 {
     if (cid == BROADCAST) {
         for (int i = 0; i < num_clients; i++) {
-            if (sendto(sock, data, size, 0, (struct sockaddr *)&clients[i].addr, sizeof(clients[i].addr)) < 0) {
+            if (sendto(sock, (const char*)data, size, 0, (struct sockaddr *)&clients[i].addr, sizeof(clients[i].addr)) < 0) {
                 handle_error("sendto()");
             }
         }
     } else {
-        if (sendto(sock, data, size, 0, (struct sockaddr *)addr, sizeof(*addr)) < 0) {
+        if (sendto(sock, (const char*)data, size, 0, (struct sockaddr *)addr, sizeof(*addr)) < 0) {
             handle_error("sendto()");
         }
     }
@@ -205,7 +209,7 @@ static void send_data(int cid, void *data, int size, struct sockaddr_in *addr)
 static int receive_data(int cid, void *data, int size, struct sockaddr_in *addr)
 {
     socklen_t addr_len = sizeof(*addr);
-    return recvfrom(sock, data, size, 0, (struct sockaddr *)addr, &addr_len);
+    return recvfrom(sock, (char*)data, size, 0, (struct sockaddr *)addr, &addr_len);
 }
 
 // メッセージ入力処理

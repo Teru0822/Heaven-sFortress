@@ -26,7 +26,11 @@ uint8_t my_result[30];
 extern bool found1;
 extern bool found2;
 extern int chessMyColor;
+#ifdef _WIN32
+static SOCKET sock;
+#else
 static int sock;
+#endif
 extern int original_turn;
 extern int fin;
 extern int my_kill_count;
@@ -468,7 +472,7 @@ static void send_data(void* data, int size)
         fprintf(stderr, "send_data(): data is illegal.\n");
         exit(1);
     }
-    if (sendto(sock, data, size, 0, (struct sockaddr*)&sv_addr, sizeof(sv_addr)) == -1) {
+    if (sendto(sock, (const char*)data, size, 0, (struct sockaddr*)&sv_addr, sizeof(sv_addr)) == -1) {
         handle_error("sendto()");
     }
 }
@@ -480,7 +484,7 @@ static int receive_data(void* data, int size)
         exit(1);
     }
     socklen_t addr_len = sizeof(sv_addr);
-    return recvfrom(sock, data, size, 0, (struct sockaddr*)&sv_addr, &addr_len);
+    return recvfrom(sock, (char*)data, size, 0, (struct sockaddr*)&sv_addr, &addr_len);
 }
 
 void handle_error(const char* message)

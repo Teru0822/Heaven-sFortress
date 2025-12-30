@@ -19,7 +19,11 @@
 
 typedef struct {
     int cid;
+#ifdef _WIN32
+    SOCKET sock;
+#else
     int sock;
+#endif
     int flags;
     struct sockaddr_in addr;
     char name[MAX_LEN_NAMES];
