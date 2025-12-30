@@ -35,6 +35,7 @@ jobs:
           brew install sdl2 sdl2_mixer glew libomp
 
       - name: Configure CMake
+        shell: bash
         run: |
           cmake -B build -DCMAKE_BUILD_TYPE=Release \
             ${{ matrix.os == 'windows-latest' && '-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake' || '' }} \
