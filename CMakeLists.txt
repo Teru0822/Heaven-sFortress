@@ -87,6 +87,16 @@ if(WIN32)
     target_compile_definitions(HeavensFortressClient PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS FREEGLUT_LIB_PRAGMAS=0 SDL_MAIN_HANDLED)
     # Suppress truncation and conversion warnings
     target_compile_options(HeavensFortressClient PRIVATE /wd4244 /wd4305 /wd4996 /wd5208 /wd4267)
+
+    # Copy DLLs to output directory
+    add_custom_command(TARGET HeavensFortressClient POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:SDL2::SDL2>
+            $<TARGET_FILE:SDL2_mixer::SDL2_mixer>
+            $<TARGET_FILE:GLEW::GLEW>
+            $<TARGET_FILE:freeglut::freeglut>
+            $<TARGET_FILE_DIR:HeavensFortressClient>
+    )
 endif()
 
 # --- Server ---
@@ -110,7 +120,7 @@ set(CPACK_PACKAGE_VENDOR "Teru0822")
 set(CPACK_PACKAGE_VERSION "1.0.0")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Heaven's Fortress Game")
 set(CPACK_PACKAGE_CONTACT "teru0822@example.com")
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/.gitignore") # Dummy license for now
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 
 if(WIN32)
     set(CPACK_GENERATOR "NSIS")
