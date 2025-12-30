@@ -159,10 +159,9 @@ int control_requests()
             data_array[checkChessPlayer[1]].game[0].stts = 4;
             data_array[checkChessPlayer[1]].game[0].mycolor = 1;
         }
-        int memInt[num_clients];
+        std::vector<int> memInt(num_clients);
         for(int i =0;i< num_clients;i++)
         {
-            memInt[i] = -1;
             memInt[i] = data_array[i].cid;
         }
         bool cont = false;

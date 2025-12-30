@@ -70,6 +70,7 @@ endif()
 
 if(WIN32)
     target_link_libraries(HeavensFortressClient ws2_32)
+    target_compile_definitions(HeavensFortressClient PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
 endif()
 
 # --- Server ---
@@ -81,6 +82,7 @@ target_include_directories(HeavensFortressServer PRIVATE .)
 
 if(WIN32)
     target_link_libraries(HeavensFortressServer ws2_32)
+    target_compile_definitions(HeavensFortressServer PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
 endif()
 
 # --- Packaging ---
