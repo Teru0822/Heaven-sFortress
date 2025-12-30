@@ -15,7 +15,7 @@ extern vihicle tankPos;
 extern vihicle sportsPos;
 extern Game game[4];
 extern chessInfoNet CIN;
-extern u_int8_t can_get;
+extern uint8_t can_get;
 extern int cmap[8][8];
 extern int chessMap[8][8];
 extern int chessMyColor;

@@ -12,7 +12,7 @@ extern bool pressA;
 extern bool pressD;
 extern bool pressS;
 extern bool pressW;
-u_int8_t can_get = 0;
+uint8_t can_get = 0;
 extern int onFire_frame_count;
 extern int weapon_aiming_torigger;
 extern int fin;
