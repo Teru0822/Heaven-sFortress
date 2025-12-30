@@ -1,0 +1,19 @@
+
+# Build directories and artifacts
+build/
+bin/
+*.o
+*.out
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.exp
+dist/
+vcpkg.json
+
+# IDEs
+.vscode/
+.vs/
+.codegpt

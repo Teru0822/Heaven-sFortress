@@ -1,0 +1,20 @@
+CXX = gcc
+CXXFLAGS = -g -I/usr/X11R6/include -pthread
+LDFLAGS = -L/usr/X11R6/lib -lglut -lGL -lGLEW -lGLU -lSDL2 -lSDL2_mixer -lm -lstdc++
+TARGET = a.out
+SRCS = Game.cpp func.cpp Scene_Animation.cpp motionController.cpp Scene_Title.cpp Collision.cpp Init.cpp InputController.cpp Scene_Shooting.cpp Scene_Chess.cpp Scene_Entrance.cpp Scene_Park.cpp Scene_Race.cpp Scene_Tank.cpp client.cpp struc.cpp
+HDRS = func.h client.h struc.h
+OBJS = $(SRCS:.cpp=.o)
+
+all:$(TARGET)
+
+$(TARGET):$(OBJS)
+	$(CXX) $(OBJS) -o $(TARGET) $(LDFLAGS)
+
+%.o: %.cpp $(HDRS)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(OBJS) $(TARGET)
+
+.PHONY: all clean
