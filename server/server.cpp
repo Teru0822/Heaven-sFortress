@@ -48,7 +48,11 @@ void setup_server(int num_cl, u_short port)
 
     // UDPソケットの作成
     sock = socket(AF_INET, SOCK_DGRAM, 0);
+#ifdef _WIN32
+    if (sock == INVALID_SOCKET) {
+#else
     if (sock < 0) {
+#endif
         handle_error("socket()");
     }
     fprintf(stderr, "socket() for UDP is done successfully.\n");
@@ -113,6 +117,22 @@ int control_requests()
 #ifndef _WIN32
     if (FD_ISSET(0, &mask)) FD_SET(0, &read_flag);
 #endif
+
+    struct timeval timeout;
+    timeout.tv_sec  = 0;
+    timeout.tv_usec = 30000;
+
+#ifdef _WIN32
+    int max_fd = 0;
+#else
+    int max_fd = (int)sock;
+#endif
+
+    int select_result = select(max_fd + 1, &read_flag, NULL, NULL, &timeout);
+    if (select_result == -1) {
+        perror("select failed");
+        return -1;
+    }
     CONTAINER data;
     memset(&data, 0, sizeof(CONTAINER));
     CONTAINER *data_array = (CONTAINER *)malloc(num_clients * sizeof(CONTAINER));

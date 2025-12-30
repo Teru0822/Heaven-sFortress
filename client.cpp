@@ -146,7 +146,11 @@ void setup_client(char* server_name, u_short port)
 
     // UDPソケットの作成
     sock = socket(AF_INET, SOCK_DGRAM, 0);
+#ifdef _WIN32
+    if (sock == INVALID_SOCKET) {
+#else
     if (sock < 0) {
+#endif
         handle_error("socket()");
     }
     fprintf(stderr, "Socket created successfully.\n");
@@ -194,14 +198,20 @@ int control_requests()
 {
     fd_set read_flag;
     FD_ZERO(&read_flag);
+#ifndef _WIN32
     FD_SET(0, &read_flag);    // 標準入力
+#endif
     FD_SET(sock, &read_flag); // UDPソケット
 
     struct timeval timeout;
     timeout.tv_sec  = 0;     // 秒
     timeout.tv_usec = 30000; // タイムアウトを30ミリ秒に設定
 
-    int max_fd = sock; // ソケットの最大ファイルディスクリプタ
+#ifdef _WIN32
+    int max_fd = 0; // Winsock select ignores this
+#else
+    int max_fd = (int)sock; // ソケットの最大ファイルディスクリプタ
+#endif
     int result = 1;
 
     // データ送信
