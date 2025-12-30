@@ -82,7 +82,9 @@ target_include_directories(HeavensFortressServer PRIVATE .)
 
 if(WIN32)
     target_link_libraries(HeavensFortressServer ws2_32)
-    target_compile_definitions(HeavensFortressServer PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
+    target_compile_definitions(HeavensFortressServer PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS SERVER_BUILD)
+else()
+    target_compile_definitions(HeavensFortressServer PRIVATE SERVER_BUILD)
 endif()
 
 # --- Packaging ---

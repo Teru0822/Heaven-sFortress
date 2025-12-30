@@ -1,4 +1,5 @@
 #pragma once
+#ifndef SERVER_BUILD
 #include <GL/glew.h>
 #ifdef __APPLE__
     #include <GLUT/glut.h>
@@ -10,6 +11,7 @@
     #include <SDL2/SDL_opengl_glext.h>
 #endif
 #include <SDL2/SDL_mixer.h>
+#endif
 #include <stdlib.h>
 #include <iostream>
 #include <limits>
@@ -225,6 +227,7 @@ enum motionAnim
 };
 
 
+#ifndef SERVER_BUILD
 class obj
 {
 public:
@@ -272,5 +275,6 @@ public:
 	int UVDataSize = 0;
 
 };
+#endif
 
 #endif
