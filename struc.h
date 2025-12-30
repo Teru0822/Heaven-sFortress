@@ -1,7 +1,14 @@
 #pragma once
 #include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <SDL2/SDL_opengl_glext.h>
+#ifdef __APPLE__
+    #include <GLUT/glut.h>
+    #include <OpenGL/gl.h>
+#else
+    #include <GL/freeglut.h>
+#endif
+#ifndef __APPLE__
+    #include <SDL2/SDL_opengl_glext.h>
+#endif
 #include <SDL2/SDL_mixer.h>
 #include <stdlib.h>
 #include <iostream>
