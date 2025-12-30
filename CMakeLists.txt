@@ -89,14 +89,22 @@ if(WIN32)
     target_compile_options(HeavensFortressClient PRIVATE /wd4244 /wd4305 /wd4996 /wd5208 /wd4267)
 
     # Copy DLLs to output directory
+    # Copy DLLs to output directory
     add_custom_command(TARGET HeavensFortressClient POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:SDL2::SDL2>
             $<TARGET_FILE:SDL2_mixer::SDL2_mixer>
             $<TARGET_FILE:GLEW::GLEW>
-            $<TARGET_FILE:freeglut::freeglut>
             $<TARGET_FILE_DIR:HeavensFortressClient>
     )
+
+    if(TARGET freeglut::freeglut)
+        add_custom_command(TARGET HeavensFortressClient POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:freeglut::freeglut>
+                $<TARGET_FILE_DIR:HeavensFortressClient>
+        )
+    endif()
 endif()
 
 # --- Server ---
