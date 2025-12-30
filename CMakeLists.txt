@@ -70,7 +70,7 @@ endif()
 
 if(WIN32)
     target_link_libraries(HeavensFortressClient ws2_32)
-    target_compile_definitions(HeavensFortressClient PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
+    target_compile_definitions(HeavensFortressClient PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS FREEGLUT_LIB_PRAGMAS=0)
 endif()
 
 # --- Server ---
