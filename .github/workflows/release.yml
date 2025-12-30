@@ -32,12 +32,13 @@ jobs:
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          brew install sdl2 sdl2_mixer glew
+          brew install sdl2 sdl2_mixer glew libomp
 
       - name: Configure CMake
         run: |
           cmake -B build -DCMAKE_BUILD_TYPE=Release \
-            ${{ matrix.os == 'windows-latest' && '-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake' || '' }}
+            ${{ matrix.os == 'windows-latest' && '-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake' || '' }} \
+            ${{ matrix.os == 'macos-latest' && '-DOpenMP_ROOT=$(brew --prefix libomp)' || '' }}
 
       - name: Build
         run: cmake --build build --config Release

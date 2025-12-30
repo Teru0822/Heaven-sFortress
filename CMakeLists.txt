@@ -12,7 +12,10 @@ find_package(GLEW REQUIRED)
 if(NOT APPLE)
     find_package(GLUT REQUIRED)
 endif()
-find_package(OpenMP REQUIRED)
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    message(STATUS "OpenMP found")
+endif()
 
 # Include directories
 include_directories(
@@ -56,7 +59,7 @@ target_link_libraries(HeavensFortressClient
     SDL2_mixer::SDL2_mixer
     ${OPENGL_LIBRARIES}
     GLEW::GLEW
-    OpenMP::OpenMP_CXX
+    $<$<BOOL:${OpenMP_CXX_FOUND}>:OpenMP::OpenMP_CXX>
 )
 
 if(APPLE)

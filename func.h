@@ -8,7 +8,9 @@
 #include <string>
 #include <sstream>
 #include <queue>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include "struc.h"
 
 
