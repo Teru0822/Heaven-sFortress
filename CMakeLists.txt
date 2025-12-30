@@ -88,6 +88,7 @@ set(CPACK_PACKAGE_NAME "HeavensFortress")
 set(CPACK_PACKAGE_VENDOR "Teru0822")
 set(CPACK_PACKAGE_VERSION "1.0.0")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Heaven's Fortress Game")
+set(CPACK_PACKAGE_CONTACT "teru0822@example.com")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/.gitignore") # Dummy license for now
 
 if(WIN32)
