@@ -17,15 +17,20 @@ endif()
 if(WIN32)
     find_package(GLEW REQUIRED)
 else()
-    # Use PkgConfig to find GLEW on Linux
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(PKG_GLEW REQUIRED glew)
-    
-    # Create the expected target manually using PkgConfig results
-    add_library(GLEW::GLEW INTERFACE IMPORTED)
-    target_link_libraries(GLEW::GLEW INTERFACE ${PKG_GLEW_LIBRARIES})
-    target_include_directories(GLEW::GLEW INTERFACE ${PKG_GLEW_INCLUDE_DIRS})
-    target_compile_options(GLEW::GLEW INTERFACE ${PKG_GLEW_CFLAGS_OTHER})
+    # Robust manual search for GLEW on Linux
+    find_path(GLEW_INCLUDE_DIR NAMES GL/glew.h PATHS /usr/include /usr/local/include /usr/include/GL)
+    find_library(GLEW_LIBRARY NAMES GLEW glew PATHS /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu)
+
+    if(GLEW_INCLUDE_DIR AND GLEW_LIBRARY)
+        message(STATUS "Found GLEW manually: ${GLEW_INCLUDE_DIR}, ${GLEW_LIBRARY}")
+        add_library(GLEW::GLEW UNKNOWN IMPORTED)
+        set_target_properties(GLEW::GLEW PROPERTIES
+            IMPORTED_LOCATION "${GLEW_LIBRARY}"
+            INTERFACE_INCLUDE_DIRECTORIES "${GLEW_INCLUDE_DIR}"
+        )
+    else()
+        message(FATAL_ERROR "Could not find GLEW manually. Checked /usr/include and /usr/lib/x86_64-linux-gnu etc.")
+    endif()
 endif()
 
 if(WIN32)
