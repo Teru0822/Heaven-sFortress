@@ -3422,6 +3422,7 @@ void roadAnimMesh(int ff,int ef,const char* path,const char* tex,obj o[])
                 break;
             }
         }
+        fclose(o[currentAnimNum].Data);
     }
     if (currentAnimNum == 0)
     {
