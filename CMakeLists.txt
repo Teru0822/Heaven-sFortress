@@ -138,6 +138,14 @@ if(WIN32)
         # Glob all DLLs in dependency directory (catch wavpack, vorbis, etc.)
         file(GLOB ALL_DEP_DLLS "${DLL_SEARCH_DIR}/*.dll")
         
+        # If no DLLs found, check if we are in lib dir and try ../bin
+        if(NOT ALL_DEP_DLLS)
+            get_filename_component(PARENT_DIR "${DLL_SEARCH_DIR}" DIRECTORY)
+            set(BIN_SEARCH_DIR "${PARENT_DIR}/bin")
+            message(STATUS "No DLLs found in ${DLL_SEARCH_DIR}. Trying ${BIN_SEARCH_DIR}")
+            file(GLOB ALL_DEP_DLLS "${BIN_SEARCH_DIR}/*.dll")
+        endif()
+        
         # Install all found DLLs
         install(FILES ${ALL_DEP_DLLS} DESTINATION bin)
         

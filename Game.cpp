@@ -394,7 +394,12 @@ int main(int argc, char** argv)
 	}
 
     // 再生する音声形式を指定して初期化
-    Mix_Init(MIX_INIT_MP3);
+    int flags = MIX_INIT_MP3;
+    if ((Mix_Init(flags) & flags) != flags) {
+        printf("Mix_Init failed: %s\n", Mix_GetError());
+        // Don't exit here, attempt to proceed (maybe other formats work or it's a minor issue), 
+        // but likely Mix_LoadMUS will fail later if this failed.
+    }
 
     // オーディオデバイスの初期化
     if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024) < 0) {
