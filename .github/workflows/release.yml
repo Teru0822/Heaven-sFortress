@@ -26,10 +26,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
-          echo "=== DEBUG: SDL2 File Check ==="
-          find /usr/include -name "SDL.h" || true
-          find /usr/include -name "SDL_mixer.h" || true
-          find /usr/lib -name "libSDL2.so" || true
+          echo "=== DEBUG: Library File Check ==="
+          find /usr/lib -name "libGL.so*" 2>/dev/null || true
+          find /usr/lib -name "libSDL2.so*" 2>/dev/null || true
+          find /usr/lib -name "libGLEW.so*" 2>/dev/null || true
+          ldconfig -p | grep -E "(libGL|libSDL2|libGLEW)" || true
           echo "PWD: $(pwd)"
           ls -R include
 
