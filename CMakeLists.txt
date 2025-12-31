@@ -122,11 +122,7 @@ endif()
 
 # Install rules
 install(TARGETS HeavensFortressClient HeavensFortressServer DESTINATION bin)
-install(DIRECTORY config DESTINATION .)
-
-# Install rules
-install(TARGETS HeavensFortressClient HeavensFortressServer DESTINATION bin)
-install(DIRECTORY config DESTINATION .)
+install(DIRECTORY config DESTINATION bin)
 
 if(WIN32)
     # Attempt to find the directory containing runtime DLLs from SDL2_mixer target
