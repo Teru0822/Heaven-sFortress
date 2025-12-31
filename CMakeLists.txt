@@ -24,11 +24,11 @@ else()
     add_library(GLEW::GLEW INTERFACE IMPORTED)
     # This results in -lGLEW
     target_link_libraries(GLEW::GLEW INTERFACE GLEW)
-    # /usr/include is default, but adding it for consistency
-    target_include_directories(GLEW::GLEW INTERFACE "/usr/include")
+    # Use local include directory where we downloaded glew.h
+    target_include_directories(GLEW::GLEW INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
     
     # Also set variable just in case
-    set(GLEW_INCLUDE_DIRS "/usr/include")
+    set(GLEW_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
 endif()
 
 if(WIN32)
