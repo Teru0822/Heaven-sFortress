@@ -8,9 +8,9 @@
     #include <GL/freeglut.h>
 #endif
 #ifndef __APPLE__
-    #include <SDL2/SDL_opengl_glext.h>
+    #include <SDL_opengl_glext.h>
 #endif
-#include <SDL2/SDL_mixer.h>
+#include <SDL_mixer.h>
 #endif
 #include <stdint.h>
 #include <stdlib.h>
