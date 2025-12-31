@@ -26,13 +26,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
-          echo "=== DEBUG: Library File Check ==="
-          find /usr/lib -name "libGL.so*" 2>/dev/null || true
-          find /usr/lib -name "libSDL2.so*" 2>/dev/null || true
-          find /usr/lib -name "libGLEW.so*" 2>/dev/null || true
-          ldconfig -p | grep -E "(libGL|libSDL2|libGLEW)" || true
+          echo "=== DEBUG: Installed packages ==="
+          dpkg -l | grep -E "(libgl1|libglu|libglew|libsdl2|freeglut)" || true
+          echo "=== DEBUG: Library files ==="
+          find /usr/lib -name "libGL.so*" -o -name "libGLU.so*" -o -name "libGLEW.so*" -o -name "libSDL2.so*" -o -name "libglut.so*" 2>/dev/null || true
+          echo "=== DEBUG: ldconfig cache ==="
+          ldconfig -p | grep -E "(libGL|libGLU|libGLEW|libSDL2|libglut)" || true
           echo "PWD: $(pwd)"
-          ls -R include
 
       - name: Install dependencies (Windows)
         if: matrix.os == 'windows-latest'
