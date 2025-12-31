@@ -17,20 +17,15 @@ endif()
 if(WIN32)
     find_package(GLEW REQUIRED)
 else()
-    # Robust manual search for GLEW on Linux
-    find_path(GLEW_INCLUDE_DIR NAMES GL/glew.h PATHS /usr/include /usr/local/include /usr/include/GL)
-    find_library(GLEW_LIBRARY NAMES GLEW glew PATHS /usr/lib /usr/local/lib /usr/lib/x86_64-linux-gnu)
-
-    if(GLEW_INCLUDE_DIR AND GLEW_LIBRARY)
-        message(STATUS "Found GLEW manually: ${GLEW_INCLUDE_DIR}, ${GLEW_LIBRARY}")
-        add_library(GLEW::GLEW UNKNOWN IMPORTED)
-        set_target_properties(GLEW::GLEW PROPERTIES
-            IMPORTED_LOCATION "${GLEW_LIBRARY}"
-            INTERFACE_INCLUDE_DIRECTORIES "${GLEW_INCLUDE_DIR}"
-        )
-    else()
-        message(FATAL_ERROR "Could not find GLEW manually. Checked /usr/include and /usr/lib/x86_64-linux-gnu etc.")
-    endif()
+    # "Trust Me" mode: Just link -lGLEW. 
+    # apt-get install libglew-dev puts it in standard paths.
+    message(STATUS "Using generic system GLEW for Linux (skipping find_library)")
+    
+    add_library(GLEW::GLEW INTERFACE IMPORTED)
+    # This results in -lGLEW
+    target_link_libraries(GLEW::GLEW INTERFACE GLEW)
+    # /usr/include is default, but adding it for consistency
+    target_include_directories(GLEW::GLEW INTERFACE "/usr/include")
 endif()
 
 if(WIN32)
