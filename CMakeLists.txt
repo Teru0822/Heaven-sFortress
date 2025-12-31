@@ -21,6 +21,9 @@ else()
     # apt-get install libglew-dev puts it in standard paths.
     message(STATUS "Using generic system GLEW for Linux (skipping find_library)")
     
+    # Ensure include directory exists to satisfy CMake's strict check on IMPORTED targets
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/GL")
+
     add_library(GLEW::GLEW INTERFACE IMPORTED)
     # This results in -lGLEW
     target_link_libraries(GLEW::GLEW INTERFACE GLEW)
