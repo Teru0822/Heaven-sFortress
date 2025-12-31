@@ -220,7 +220,30 @@ if(WIN32)
 elseif(APPLE)
     set(CPACK_GENERATOR "DragNDrop")
 else()
+    # Linux packaging
     set(CPACK_GENERATOR "TGZ;DEB")
+    
+    # DEB-specific settings
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Teru0822 <teru0822@example.com>")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libsdl2-2.0-0, libsdl2-mixer-2.0-0, libglew2.2, freeglut3, libgl1, libglu1-mesa")
+    set(CPACK_DEBIAN_PACKAGE_SECTION "games")
+    set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/Teru0822/Heaven-sFortress")
+    set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+    
+    # Create desktop entry
+    set(DESKTOP_FILE "${CMAKE_CURRENT_BINARY_DIR}/HeavensFortress.desktop")
+    file(WRITE ${DESKTOP_FILE}
+"[Desktop Entry]
+Type=Application
+Name=Heaven's Fortress
+Comment=Heaven's Fortress Game
+Exec=/usr/bin/HeavensFortressClient
+Icon=heavensfortress
+Terminal=false
+Categories=Game;
+")
+    install(FILES ${DESKTOP_FILE} DESTINATION share/applications)
 endif()
 
 # Install rules
