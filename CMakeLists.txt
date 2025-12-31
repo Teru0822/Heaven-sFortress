@@ -40,8 +40,8 @@ else()
 
     # Fallback if find_path failed but we are on Linux
     if(NOT SDL2_INCLUDE_DIR)
-        message(STATUS "SDL2_INCLUDE_DIR not found, using /usr/include/SDL2 as fallback")
-        set(SDL2_INCLUDE_DIR "/usr/include/SDL2")
+        message(STATUS "SDL2_INCLUDE_DIR not found, will rely on system defaults")
+        set(SDL2_INCLUDE_DIR "")
     endif()
     if(NOT SDL2_LIBRARY)
         message(STATUS "SDL2_LIBRARY not found, using SDL2 as fallback")
@@ -49,8 +49,8 @@ else()
     endif()
     
     if(NOT SDL2_MIXER_INCLUDE_DIR)
-        message(STATUS "SDL2_MIXER_INCLUDE_DIR not found, using /usr/include/SDL2 as fallback")
-        set(SDL2_MIXER_INCLUDE_DIR "/usr/include/SDL2")
+        message(STATUS "SDL2_MIXER_INCLUDE_DIR not found, will rely on system defaults")
+        set(SDL2_MIXER_INCLUDE_DIR "")
     endif()
     if(NOT SDL2_MIXER_LIBRARY)
         message(STATUS "SDL2_MIXER_LIBRARY not found, using SDL2_mixer as fallback")
@@ -58,24 +58,28 @@ else()
     endif()
 
     set(SDL2_FOUND TRUE)
-    set(SDL2_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
     set(SDL2_LIBRARIES ${SDL2_LIBRARY})
-
+    
     set(SDL2_MIXER_FOUND TRUE)
-    set(SDL2_MIXER_INCLUDE_DIRS ${SDL2_MIXER_INCLUDE_DIR})
     set(SDL2_MIXER_LIBRARIES ${SDL2_MIXER_LIBRARY})
 
     # Create imported targets to satisfy target_link_libraries downstream
     if(NOT TARGET SDL2::SDL2)
         add_library(SDL2::SDL2 INTERFACE IMPORTED)
         target_link_libraries(SDL2::SDL2 INTERFACE ${SDL2_LIBRARIES})
-        target_include_directories(SDL2::SDL2 INTERFACE ${SDL2_INCLUDE_DIRS})
+        # Only add include directory if it exists
+        if(SDL2_INCLUDE_DIR)
+            target_include_directories(SDL2::SDL2 INTERFACE ${SDL2_INCLUDE_DIR})
+        endif()
     endif()
     
     if(NOT TARGET SDL2_mixer::SDL2_mixer)
         add_library(SDL2_mixer::SDL2_mixer INTERFACE IMPORTED)
         target_link_libraries(SDL2_mixer::SDL2_mixer INTERFACE ${SDL2_MIXER_LIBRARIES})
-        target_include_directories(SDL2_mixer::SDL2_mixer INTERFACE ${SDL2_MIXER_INCLUDE_DIRS})
+        # Only add include directory if it exists
+        if(SDL2_MIXER_INCLUDE_DIR)
+            target_include_directories(SDL2_mixer::SDL2_mixer INTERFACE ${SDL2_MIXER_INCLUDE_DIR})
+        endif()
     endif()
 endif()
 if(WIN32)
