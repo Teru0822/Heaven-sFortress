@@ -39,8 +39,11 @@ HeavensFortressServer.exe 2 10000
 # Windows
 HeavensFortressClient.exe [サーバーIP] [ポート番号]
 
-# 例: ローカルホストのサーバー(ポート10000)に接続
-HeavensFortressClient.exe 127.0.0.1 10000
+# 例1: 自分のPCでサーバーも動かしている場合 (ローカル接続)
+HeavensFortressClient.exe 127.0.0.1 50100
+
+# 例2: 同じネットワーク内の別のPC (IP: 192.168.1.10) のサーバーに接続する場合
+HeavensFortressClient.exe 192.168.1.10 50100
 ```
 
 起動後、プレイヤー名を入力してゲームに参加します。
