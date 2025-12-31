@@ -28,6 +28,15 @@ jobs:
           sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
           echo "=== DEBUG: Installed packages ==="
           dpkg -l | grep -E "(libgl1|libglu|libglew|libsdl2|freeglut)" || true
+          echo "=== DEBUG: pkg-config search ==="
+          pkg-config --list-all | grep -E "(gl|glu|glew|sdl2|glut)" || true
+          echo "=== DEBUG: pkg-config details ==="
+          pkg-config --cflags --libs gl || echo "gl not found"
+          pkg-config --cflags --libs glu || echo "glu not found"
+          pkg-config --cflags --libs glew || echo "glew not found"
+          pkg-config --cflags --libs sdl2 || echo "sdl2 not found"
+          pkg-config --cflags --libs SDL2_mixer || echo "SDL2_mixer not found"
+          pkg-config --cflags --libs glut || echo "glut not found"
           echo "=== DEBUG: Library files ==="
           find /usr/lib -name "libGL.so*" -o -name "libGLU.so*" -o -name "libGLEW.so*" -o -name "libSDL2.so*" -o -name "libglut.so*" 2>/dev/null || true
           echo "=== DEBUG: ldconfig cache ==="
