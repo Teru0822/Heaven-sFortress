@@ -27,10 +27,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
           sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
-          echo "=== DEBUG: Finding glu.h ==="
-          find /usr -name "glu.h"
-          echo "=== DEBUG: Finding SDL headers ==="
-          find /usr -name "SDL_opengl_glext.h"
+          echo "=== DEBUG: Finding SDL_mixer.h ==="
+          find /usr -name "SDL_mixer.h"
           echo "PWD: $(pwd)"
           ls -R include
 
