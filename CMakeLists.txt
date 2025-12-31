@@ -40,8 +40,9 @@ if(WIN32)
     find_package(SDL2_mixer CONFIG REQUIRED)
 else()
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(SDL2 REQUIRED sdl2)
-    pkg_check_modules(SDL2_MIXER REQUIRED SDL2_mixer)
+    # Try multiple common naming conventions for SDL2 pkg-config
+    pkg_check_modules(SDL2 REQUIRED sdl2>=2.0.0 SDL2>=2.0.0)
+    pkg_check_modules(SDL2_MIXER REQUIRED SDL2_mixer>=2.0.0 sdl2_mixer>=2.0.0)
 
     # Create imported targets to satisfy target_link_libraries downstream
     if(NOT TARGET SDL2::SDL2)

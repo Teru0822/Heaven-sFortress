@@ -26,6 +26,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
+          echo "=== DEBUG: pkg-config check ==="
+          pkg-config --list-all | grep SDL2 || true
+          pkg-config --cflags --libs sdl2 || true
+          pkg-config --cflags --libs SDL2_mixer || true
           echo "PWD: $(pwd)"
           ls -R include
 
