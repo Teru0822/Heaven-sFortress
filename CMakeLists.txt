@@ -11,21 +11,30 @@ else()
     # Direct library paths for Linux (Ubuntu 22.04)
     message(STATUS "Searching for libraries in standard Linux paths...")
     
-    # Find actual library files - try multiple paths
-    find_library(GL_LIB NAMES GL 
-        PATHS /usr/lib/x86_64-linux-gnu /usr/lib /usr/lib64 /lib/x86_64-linux-gnu /lib /lib64)
-    find_library(GLU_LIB NAMES GLU 
-        PATHS /usr/lib/x86_64-linux-gnu /usr/lib /usr/lib64 /lib/x86_64-linux-gnu /lib /lib64)
+    # Find actual library files - try multiple names and paths
+    find_library(GL_LIB 
+        NAMES GL OpenGL
+        PATHS /usr/lib/x86_64-linux-gnu /usr/lib /usr/lib64 /lib/x86_64-linux-gnu /lib /lib64
+        PATH_SUFFIXES GL)
+    find_library(GLU_LIB 
+        NAMES GLU
+        PATHS /usr/lib/x86_64-linux-gnu /usr/lib /usr/lib64 /lib/x86_64-linux-gnu /lib /lib64
+        PATH_SUFFIXES GL)
     
     if(GL_LIB AND GLU_LIB)
         set(OPENGL_LIBRARIES ${GL_LIB} ${GLU_LIB})
         message(STATUS "Found GL: ${GL_LIB}")
         message(STATUS "Found GLU: ${GLU_LIB}")
     else()
-        # Fallback to system search
-        set(OPENGL_LIBRARIES GL GLU)
-        message(WARNING "GL/GLU not found! GL_LIB=${GL_LIB}, GLU_LIB=${GLU_LIB}")
-        message(WARNING "Using fallback library names - linking may fail")
+        # Try CMake's standard FindOpenGL as last resort
+        find_package(OpenGL)
+        if(OPENGL_FOUND)
+            message(STATUS "Found OpenGL via FindOpenGL module")
+        else()
+            set(OPENGL_LIBRARIES GL GLU)
+            message(WARNING "GL/GLU not found! GL_LIB=${GL_LIB}, GLU_LIB=${GLU_LIB}")
+            message(WARNING "Using fallback library names - linking may fail")
+        endif()
     endif()
     set(OPENGL_FOUND TRUE)
     include_directories("/usr/include")
@@ -34,7 +43,7 @@ if(WIN32)
     find_package(GLEW REQUIRED)
 elseif(UNIX AND NOT APPLE)
     # Direct library path for GLEW on Linux
-    find_library(GLEW_LIB NAMES GLEW 
+    find_library(GLEW_LIB NAMES GLEW glew
         PATHS /usr/lib/x86_64-linux-gnu /usr/lib /usr/lib64 /lib/x86_64-linux-gnu /lib /lib64)
     if(GLEW_LIB)
         message(STATUS "Found GLEW: ${GLEW_LIB}")
@@ -42,10 +51,14 @@ elseif(UNIX AND NOT APPLE)
         target_link_libraries(GLEW::GLEW INTERFACE ${GLEW_LIB})
         target_include_directories(GLEW::GLEW INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
     else()
-        message(WARNING "GLEW not found! GLEW_LIB=${GLEW_LIB}")
-        add_library(GLEW::GLEW INTERFACE IMPORTED)
-        target_link_libraries(GLEW::GLEW INTERFACE GLEW)
-        target_include_directories(GLEW::GLEW INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+        # Try standard FindGLEW
+        find_package(GLEW)
+        if(NOT GLEW_FOUND)
+            message(WARNING "GLEW not found! GLEW_LIB=${GLEW_LIB}")
+            add_library(GLEW::GLEW INTERFACE IMPORTED)
+            target_link_libraries(GLEW::GLEW INTERFACE GLEW)
+            target_include_directories(GLEW::GLEW INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+        endif()
     endif()
     set(GLEW_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
 endif()
@@ -97,14 +110,18 @@ if(WIN32)
     endif()
 elseif(NOT APPLE)
     # Direct library path for GLUT on Linux
-    find_library(GLUT_LIB NAMES glut 
+    find_library(GLUT_LIB NAMES glut freeglut
         PATHS /usr/lib/x86_64-linux-gnu /usr/lib /usr/lib64 /lib/x86_64-linux-gnu /lib /lib64)
     if(GLUT_LIB)
         message(STATUS "Found GLUT: ${GLUT_LIB}")
         set(GLUT_LIBRARIES ${GLUT_LIB})
     else()
-        message(WARNING "GLUT not found! GLUT_LIB=${GLUT_LIB}")
-        set(GLUT_LIBRARIES glut)
+        # Try standard FindGLUT
+        find_package(GLUT)
+        if(NOT GLUT_FOUND)
+            message(WARNING "GLUT not found! GLUT_LIB=${GLUT_LIB}")
+            set(GLUT_LIBRARIES glut)
+        endif()
     endif()
     set(GLUT_FOUND TRUE)
 endif()
