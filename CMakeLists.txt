@@ -47,6 +47,8 @@ else()
     # Create imported targets to satisfy target_link_libraries downstream
     add_library(SDL2::SDL2 INTERFACE IMPORTED)
     target_link_libraries(SDL2::SDL2 INTERFACE SDL2)
+    # Ensure SDL2 headers are found manually
+    target_include_directories(SDL2::SDL2 INTERFACE "/usr/include/SDL2")
     
     add_library(SDL2_mixer::SDL2_mixer INTERFACE IMPORTED)
     target_link_libraries(SDL2_mixer::SDL2_mixer INTERFACE SDL2_mixer)
