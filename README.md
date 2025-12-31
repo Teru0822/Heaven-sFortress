@@ -46,6 +46,27 @@ HeavensFortressClient.exe 127.0.0.1 50100
 HeavensFortressClient.exe 192.168.1.10 50100
 ```
 
+### Linuxでの実行
+実行時に `libSDL2_mixer` などのライブラリが見つからないエラーが出る場合は、必要なランタイムライブラリをインストールしてください。
+
+#### 依存ライブラリのインストール (Ubuntu/Debian系)
+```bash
+sudo apt-get update
+sudo apt-get install libsdl2-2.0-0 libsdl2-mixer-2.0-0 libglew2.2 libfreeglut3 libgomp1
+```
+
+#### 実行コマンド
+実行権限を付与してから実行します。
+```bash
+chmod +x HeavensFortressServer HeavensFortressClient
+
+# サーバー
+./HeavensFortressServer 2 50100
+
+# クライアント
+./HeavensFortressClient 127.0.0.1 50100
+```
+
 起動後、プレイヤー名を入力してゲームに参加します。
 
 ## ゲームモード (Scenes)
