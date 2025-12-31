@@ -17,13 +17,15 @@ endif()
 if(WIN32)
     find_package(GLEW REQUIRED)
 else()
-    # Manual fallback for GLEW on Linux
-    set(GLEW_INCLUDE_DIRS /usr/include)
-    set(GLEW_LIBRARIES GLEW)
-    # Create the expected target manually
+    # Use PkgConfig to find GLEW on Linux
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(PKG_GLEW REQUIRED glew)
+    
+    # Create the expected target manually using PkgConfig results
     add_library(GLEW::GLEW INTERFACE IMPORTED)
-    target_link_libraries(GLEW::GLEW INTERFACE GLEW)
-    target_include_directories(GLEW::GLEW INTERFACE ${GLEW_INCLUDE_DIRS})
+    target_link_libraries(GLEW::GLEW INTERFACE ${PKG_GLEW_LIBRARIES})
+    target_include_directories(GLEW::GLEW INTERFACE ${PKG_GLEW_INCLUDE_DIRS})
+    target_compile_options(GLEW::GLEW INTERFACE ${PKG_GLEW_CFLAGS_OTHER})
 endif()
 
 if(WIN32)
