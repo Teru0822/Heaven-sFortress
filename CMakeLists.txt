@@ -39,24 +39,22 @@ if(WIN32)
     find_package(SDL2 CONFIG REQUIRED)
     find_package(SDL2_mixer CONFIG REQUIRED)
 else()
-    # Manual fallback for Linux: directly link standard SDL2 libraries
-    message(STATUS "Using generic SDL2 libraries for Linux")
-    set(SDL2_LIBRARIES SDL2)
-    set(SDL2_MIXER_LIBRARIES SDL2_mixer)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(SDL2 REQUIRED sdl2)
+    pkg_check_modules(SDL2_MIXER REQUIRED SDL2_mixer)
+
     # Create imported targets to satisfy target_link_libraries downstream
-    add_library(SDL2::SDL2 INTERFACE IMPORTED)
-    target_link_libraries(SDL2::SDL2 INTERFACE SDL2)
-    # Point to local include where we have SDL2/SDL_opengl_glext.h fallback
-    # And include /usr/include for system SDL2 headers
-    target_include_directories(SDL2::SDL2 INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include" "/usr/include")
+    if(NOT TARGET SDL2::SDL2)
+        add_library(SDL2::SDL2 INTERFACE IMPORTED)
+        target_link_libraries(SDL2::SDL2 INTERFACE ${SDL2_LIBRARIES})
+        target_include_directories(SDL2::SDL2 INTERFACE ${SDL2_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}/include")
+    endif()
     
-    add_library(SDL2_mixer::SDL2_mixer INTERFACE IMPORTED)
-    target_link_libraries(SDL2_mixer::SDL2_mixer INTERFACE SDL2_mixer)
-    target_include_directories(SDL2_mixer::SDL2_mixer INTERFACE "/usr/include")
-    
-    # Set variables for the global include_directories call below
-    set(SDL2_INCLUDE_DIRS "/usr/include" "/usr/include/SDL2")
-    set(SDL2_MIXER_INCLUDE_DIRS "/usr/include" "/usr/include/SDL2")
+    if(NOT TARGET SDL2_mixer::SDL2_mixer)
+        add_library(SDL2_mixer::SDL2_mixer INTERFACE IMPORTED)
+        target_link_libraries(SDL2_mixer::SDL2_mixer INTERFACE ${SDL2_MIXER_LIBRARIES})
+        target_include_directories(SDL2_mixer::SDL2_mixer INTERFACE ${SDL2_MIXER_INCLUDE_DIRS})
+    endif()
 endif()
 if(WIN32)
     add_definitions(-DWIN32_LEAN_AND_MEAN -DNOMINMAX)
