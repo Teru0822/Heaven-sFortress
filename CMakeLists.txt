@@ -26,6 +26,9 @@ else()
     target_link_libraries(GLEW::GLEW INTERFACE GLEW)
     # /usr/include is default, but adding it for consistency
     target_include_directories(GLEW::GLEW INTERFACE "/usr/include")
+    
+    # Also set variable just in case
+    set(GLEW_INCLUDE_DIRS "/usr/include")
 endif()
 
 if(WIN32)
