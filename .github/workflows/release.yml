@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          vcpkg install sdl2 sdl2-mixer glew freeglut
+          vcpkg install sdl2 sdl2-mixer[mpg123] glew freeglut opengl --triplet x64-windows
           choco install nsis
 
       - name: Install dependencies (macOS)
@@ -42,7 +42,7 @@ jobs:
         shell: bash
         run: |
           cmake -B build -DCMAKE_BUILD_TYPE=Release \
-            ${{ matrix.os == 'windows-latest' && '-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake' || '' }} \
+            ${{ matrix.os == 'windows-latest' && '-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows' || '' }} \
             ${{ matrix.os == 'macos-latest' && '-DOpenMP_ROOT=$(brew --prefix libomp)' || '' }}
 
       - name: Build

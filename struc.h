@@ -12,6 +12,7 @@
 #endif
 #include <SDL2/SDL_mixer.h>
 #endif
+#include <stdint.h>
 #include <stdlib.h>
 #include <iostream>
 #include <limits>
