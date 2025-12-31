@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-latest, macos-latest]
+        os: [ubuntu-22.04, windows-latest]
     
     steps:
       - name: Checkout code
@@ -50,17 +50,11 @@ jobs:
           choco install nsis
           echo "C:\Program Files (x86)\NSIS" >> $env:GITHUB_PATH
 
-      - name: Install dependencies (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew install sdl2 sdl2_mixer glew libomp
-
       - name: Configure CMake
         shell: bash
         run: |
           cmake -B build -DCMAKE_BUILD_TYPE=Release \
-            ${{ matrix.os == 'windows-latest' && '-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows' || '' }} \
-            ${{ matrix.os == 'macos-latest' && '-DOpenMP_ROOT=$(brew --prefix libomp)' || '' }}
+            ${{ matrix.os == 'windows-latest' && '-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows' || '' }}
 
       - name: Build
         run: cmake --build build --config Release --verbose
