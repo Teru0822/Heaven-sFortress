@@ -3382,7 +3382,7 @@ void roadAnimMesh(int ff,int ef,const char* path,const char* tex,obj o[])
 {
 
     std::stringstream ss;
-    ss << path << "_frame_" << currentAnimNum + ff << ".txt"; 
+    ss << path << "_frame_" << std::to_string(currentAnimNum + ff) << ".txt"; 
     std::string filename = ss.str();
     o[currentAnimNum].Data = fopen(filename.c_str(),"r");
     //fopen_s(&o[currentAnimNum].Data, filename.c_str(), "r");
