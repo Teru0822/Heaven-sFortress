@@ -53,6 +53,10 @@ else()
     add_library(SDL2_mixer::SDL2_mixer INTERFACE IMPORTED)
     target_link_libraries(SDL2_mixer::SDL2_mixer INTERFACE SDL2_mixer)
     target_include_directories(SDL2_mixer::SDL2_mixer INTERFACE "/usr/include")
+    
+    # Set variables for the global include_directories call below
+    set(SDL2_INCLUDE_DIRS "/usr/include" "/usr/include/SDL2")
+    set(SDL2_MIXER_INCLUDE_DIRS "/usr/include" "/usr/include/SDL2")
 endif()
 if(WIN32)
     add_definitions(-DWIN32_LEAN_AND_MEAN -DNOMINMAX)
