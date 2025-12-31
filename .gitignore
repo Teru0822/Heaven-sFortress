@@ -17,3 +17,4 @@ vcpkg.json
 .vscode/
 .vs/
 .codegpt
+build_local/
