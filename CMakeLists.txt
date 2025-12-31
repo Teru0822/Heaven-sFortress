@@ -17,21 +17,13 @@ else()
 endif()
 if(WIN32)
     find_package(GLEW REQUIRED)
-else()
-    # "Trust Me" mode: Just link -lGLEW. 
-    # apt-get install libglew-dev puts it in standard paths.
+elseif(UNIX AND NOT APPLE)
+    # Manual GLEW setup for Linux only
     message(STATUS "Using generic system GLEW for Linux (skipping find_library)")
-    
-    # Ensure include directory exists to satisfy CMake's strict check on IMPORTED targets
-    file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/GL")
-
     add_library(GLEW::GLEW INTERFACE IMPORTED)
-    # This results in -lGLEW
     target_link_libraries(GLEW::GLEW INTERFACE GLEW)
-    # Use local include directory where we downloaded glew.h
+    # Use local include directory where we downloaded glew.h for Linux
     target_include_directories(GLEW::GLEW INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-    
-    # Also set variable just in case
     set(GLEW_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
 endif()
 
@@ -77,7 +69,7 @@ else()
     if(NOT TARGET SDL2::SDL2)
         add_library(SDL2::SDL2 INTERFACE IMPORTED)
         target_link_libraries(SDL2::SDL2 INTERFACE ${SDL2_LIBRARIES})
-        target_include_directories(SDL2::SDL2 INTERFACE ${SDL2_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}/include")
+        target_include_directories(SDL2::SDL2 INTERFACE ${SDL2_INCLUDE_DIRS})
     endif()
     
     if(NOT TARGET SDL2_mixer::SDL2_mixer)
@@ -111,9 +103,13 @@ include_directories(
     ${SDL2_INCLUDE_DIRS}
     ${SDL2_MIXER_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
     .
 )
+
+# Add local include only on Linux (for GL headers fallback)
+if(UNIX AND NOT APPLE)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+endif()
 
 if(APPLE)
     # macOS specific frameworks
