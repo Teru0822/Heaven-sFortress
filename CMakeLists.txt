@@ -14,7 +14,17 @@ else()
     set(OPENGL_LIBRARIES GL GLU)
     set(OPENGL_FOUND TRUE)
 endif()
-find_package(GLEW REQUIRED)
+if(WIN32)
+    find_package(GLEW REQUIRED)
+else()
+    # Manual fallback for GLEW on Linux
+    set(GLEW_INCLUDE_DIRS /usr/include)
+    set(GLEW_LIBRARIES GLEW)
+    # Create the expected target manually
+    add_library(GLEW::GLEW INTERFACE IMPORTED)
+    target_link_libraries(GLEW::GLEW INTERFACE GLEW)
+    target_include_directories(GLEW::GLEW INTERFACE ${GLEW_INCLUDE_DIRS})
+endif()
 
 if(WIN32)
     find_package(SDL2 CONFIG REQUIRED)
