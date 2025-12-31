@@ -22,30 +22,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
-          echo "=== DEBUG: Installed packages ==="
-          dpkg -l | grep -E "(libgl1|libglu|libglew|libsdl2|freeglut)" || true
-          echo "=== DEBUG: pkg-config search ==="
-          pkg-config --list-all | grep -E "(gl|glu|glew|sdl2|glut)" || true
-          echo "=== DEBUG: pkg-config details ==="
-          pkg-config --cflags --libs gl || echo "gl not found"
-          pkg-config --cflags --libs glu || echo "glu not found"
-          pkg-config --cflags --libs glew || echo "glew not found"
-          pkg-config --cflags --libs sdl2 || echo "sdl2 not found"
-          pkg-config --cflags --libs SDL2_mixer || echo "SDL2_mixer not found"
-          pkg-config --cflags --libs glut || echo "glut not found"
-          echo "=== DEBUG: Library files ==="
-          find /usr/lib -name "libGL.so*" -o -name "libGLU.so*" -o -name "libGLEW.so*" -o -name "libSDL2.so*" -o -name "libglut.so*" 2>/dev/null || true
-          echo "=== DEBUG: ldconfig cache ==="
-          ldconfig -p | grep -E "(libGL|libGLU|libGLEW|libSDL2|libglut)" || true
-          echo "=== DEBUG: Verify critical libraries exist ==="
-          ls -la /usr/lib/x86_64-linux-gnu/libGL* || echo "No libGL found"
-          ls -la /usr/lib/x86_64-linux-gnu/libSDL2* || echo "No libSDL2 found"
-          ls -la /usr/lib/x86_64-linux-gnu/libGLEW* || echo "No libGLEW found"
-          echo "PWD: $(pwd)"
+          # Only install tools needed for packaging, not build dependencies
+          sudo apt-get install -y tar gzip
 
       - name: Install dependencies (Windows)
         if: matrix.os == 'windows-latest'
@@ -54,25 +35,81 @@ jobs:
           choco install nsis
           echo "C:\Program Files (x86)\NSIS" >> $env:GITHUB_PATH
 
-      - name: Configure CMake
+      - name: Configure CMake (Windows only)
+        if: matrix.os == 'windows-latest'
         shell: bash
         run: |
           cmake -B build -DCMAKE_BUILD_TYPE=Release \
-            ${{ matrix.os == 'windows-latest' && '-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows' || '' }}
+            -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows
 
-      - name: Build
+      - name: Build (Windows only)
+        if: matrix.os == 'windows-latest'
         run: cmake --build build --config Release --verbose
 
-      - name: Package
+      - name: Package (Windows)
+        if: matrix.os == 'windows-latest'
         run: |
           cd build
           cpack -C Release
+
+      - name: Create Source Package (Linux)
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          # Create source distribution with build instructions
+          mkdir -p dist
+          tar czf dist/HeavensFortress-${{ github.ref_name }}-source.tar.gz \
+            --exclude='.git' \
+            --exclude='build*' \
+            --exclude='dist' \
+            --exclude='.github' \
+            --transform 's,^,HeavensFortress-source/,' \
+            .
+          
+          # Create build instructions
+          cat > dist/BUILD_INSTRUCTIONS.txt << 'EOF'
+          Heaven's Fortress - Linux Build Instructions
+          =============================================
+
+          Prerequisites:
+          --------------
+          Install the following packages on Ubuntu/Debian:
+            sudo apt-get install build-essential cmake libsdl2-dev libsdl2-mixer-dev \
+                                 libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev \
+                                 libglu1-mesa-dev mesa-common-dev pkg-config
+
+          Build Steps:
+          ------------
+          1. Extract the source archive:
+             tar xzf HeavensFortress-*-source.tar.gz
+             cd HeavensFortress-source
+
+          2. Create build directory:
+             mkdir build && cd build
+
+          3. Configure with CMake:
+             cmake .. -DCMAKE_BUILD_TYPE=Release
+
+          4. Build:
+             make -j$(nproc)
+
+          5. Install (optional):
+             sudo make install
+
+          Or create a DEB package:
+             cpack -G DEB
+
+          The executables will be in the build directory:
+          - HeavensFortressClient (game client)
+          - HeavensFortressServer (game server)
+          EOF
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: HeavensFortress-${{ matrix.os }}
-          path: build/HeavensFortress*
+          path: |
+            build/HeavensFortress*
+            dist/*
 
   release:
     name: Create Release
