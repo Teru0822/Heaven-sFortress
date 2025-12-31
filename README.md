@@ -10,11 +10,48 @@
 ## インストール方法
 
 ### Windows
-1. Releasesページからインストーラー(`.exe`)をダウンロードします。
-2. インストーラーを実行し、画面の指示に従ってインストールしてください。
+1. [Releases](https://github.com/Teru0822/Heaven-sFortress/releases)ページから最新のインストーラー（`HeavensFortress-*-win64.zip` または `.exe`）をダウンロードします。
+2. ZIPファイルを解凍するか、インストーラーを実行してインストールしてください。
 
-### macOS / Linux
-Releaseページから `.dmg` (macOS) または `.deb`/`.tar.gz` (Linux) をダウンロードしてインストールしてください。
+### Linux
+1. [Releases](https://github.com/Teru0822/Heaven-sFortress/releases)ページから最新のソースアーカイブ（`HeavensFortress-*-source.tar.gz`）をダウンロードします。
+2. 以下の手順でビルドしてください。
+
+#### Linux ビルド手順
+
+**必要なパッケージのインストール (Ubuntu/Debian):**
+```bash
+sudo apt-get update
+sudo apt-get install build-essential cmake libsdl2-dev libsdl2-mixer-dev \
+                     libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev \
+                     libglu1-mesa-dev mesa-common-dev pkg-config
+```
+
+**ビルド:**
+```bash
+# ソースアーカイブを解凍
+tar xzf HeavensFortress-*-source.tar.gz
+cd HeavensFortress-source
+
+# ビルドディレクトリを作成
+mkdir build && cd build
+
+# CMakeで設定
+cmake .. -DCMAKE_BUILD_TYPE=Release
+
+# ビルド (並列ビルドで高速化)
+make -j$(nproc)
+
+# オプション: システムにインストール
+sudo make install
+
+# または、DEBパッケージを作成
+cpack -G DEB
+```
+
+ビルド後、実行ファイルは `build` ディレクトリ内に生成されます：
+- `HeavensFortressClient` (ゲームクライアント)
+- `HeavensFortressServer` (ゲームサーバー)
 
 ## 実行方法
 
@@ -27,8 +64,11 @@ Releaseページから `.dmg` (macOS) または `.deb`/`.tar.gz` (Linux) をダ�
 # Windows
 HeavensFortressServer.exe [クライアント数] [ポート番号]
 
+# Linux
+./HeavensFortressServer [クライアント数] [ポート番号]
+
 # 例: 2人で遊ぶ場合、ポート10000を使用
-HeavensFortressServer.exe 2 10000
+HeavensFortressServer 2 10000
 ```
 ※ ポート番号を省略した場合、デフォルトポートが使用されます。
 
@@ -39,32 +79,14 @@ HeavensFortressServer.exe 2 10000
 # Windows
 HeavensFortressClient.exe [サーバーIP] [ポート番号]
 
+# Linux
+./HeavensFortressClient [サーバーIP] [ポート番号]
+
 # 例1: 自分のPCでサーバーも動かしている場合 (ローカル接続)
-HeavensFortressClient.exe 127.0.0.1 50100
+HeavensFortressClient 127.0.0.1 50100
 
 # 例2: 同じネットワーク内の別のPC (IP: 192.168.1.10) のサーバーに接続する場合
-HeavensFortressClient.exe 192.168.1.10 50100
-```
-
-### Linuxでの実行
-実行時に `libSDL2_mixer` などのライブラリが見つからないエラーが出る場合は、必要なランタイムライブラリをインストールしてください。
-
-#### 依存ライブラリのインストール (Ubuntu/Debian系)
-```bash
-sudo apt-get update
-sudo apt-get install libsdl2-2.0-0 libsdl2-mixer-2.0-0 libglew2.2 libfreeglut3 libgomp1
-```
-
-#### 実行コマンド
-実行権限を付与してから実行します。
-```bash
-chmod +x HeavensFortressServer HeavensFortressClient
-
-# サーバー
-./HeavensFortressServer 2 50100
-
-# クライアント
-./HeavensFortressClient 127.0.0.1 50100
+HeavensFortressClient 192.168.1.10 50100
 ```
 
 起動後、プレイヤー名を入力してゲームに参加します。
@@ -104,13 +126,23 @@ chmod +x HeavensFortressServer HeavensFortressClient
   - **駒の選択/配置**: マウス操作
   - **視点変更**: マウスドラッグ
 
-## ビルド方法 (開発者向け)
+## 開発者向け情報
 
-ソースコードからビルドする場合は `CMake` を使用します。
+### ビルド環境
+- **CMake** 3.10 以上
+- **C++17** 対応コンパイラ
+- **依存ライブラリ**: SDL2, SDL2_mixer, GLEW, OpenGL, freeglut, OpenMP
 
+### Windows でのビルド
 ```bash
-mkdir build
-cd build
-cmake ..
+# vcpkg で依存関係をインストール
+vcpkg install sdl2 sdl2-mixer glew freeglut opengl --triplet x64-windows
+
+# ビルド
+mkdir build && cd build
+cmake .. -DCMAKE_TOOLCHAIN_FILE=[vcpkgのパス]/scripts/buildsystems/vcpkg.cmake
 cmake --build . --config Release
 ```
+
+### Linux でのビルド
+上記「Linux ビルド手順」を参照してください。
