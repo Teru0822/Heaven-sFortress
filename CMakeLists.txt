@@ -72,6 +72,7 @@ include_directories(
     ${SDL2_INCLUDE_DIRS}
     ${SDL2_MIXER_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
     .
 )
 

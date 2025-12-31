@@ -28,9 +28,10 @@ jobs:
           sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
           sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
           # Validating and Fixing GLEW header missing issue
-          mkdir -p GL
-          wget https://raw.githubusercontent.com/nigels-com/glew/master/include/GL/glew.h -O GL/glew.h
-          ls -R GL
+          echo "PWD: $(pwd)"
+          mkdir -p include/GL
+          wget https://raw.githubusercontent.com/nigels-com/glew/master/include/GL/glew.h -O include/GL/glew.h
+          ls -R include
 
       - name: Install dependencies (Windows)
         if: matrix.os == 'windows-latest'
