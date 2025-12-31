@@ -39,16 +39,26 @@ if(WIN32)
     find_package(SDL2 CONFIG REQUIRED)
     find_package(SDL2_mixer CONFIG REQUIRED)
 else()
-    find_package(PkgConfig REQUIRED)
-    # Try multiple common naming conventions for SDL2 pkg-config
-    pkg_check_modules(SDL2 sdl2>=2.0.0)
-    if(NOT SDL2_FOUND)
-        pkg_check_modules(SDL2 REQUIRED SDL2>=2.0.0)
+    # Use standard CMake search for SDL2 on Linux
+    find_path(SDL2_INCLUDE_DIR SDL.h PATH_SUFFIXES SDL2)
+    find_library(SDL2_LIBRARY NAMES SDL2)
+    find_path(SDL2_MIXER_INCLUDE_DIR SDL_mixer.h PATH_SUFFIXES SDL2)
+    find_library(SDL2_MIXER_LIBRARY NAMES SDL2_mixer)
+
+    if(SDL2_INCLUDE_DIR AND SDL2_LIBRARY)
+        set(SDL2_FOUND TRUE)
+        set(SDL2_INCLUDE_DIRS ${SDL2_INCLUDE_DIR})
+        set(SDL2_LIBRARIES ${SDL2_LIBRARY})
+    else()
+        message(FATAL_ERROR "SDL2 not found! Include: ${SDL2_INCLUDE_DIR}, Lib: ${SDL2_LIBRARY}")
     endif()
-    
-    pkg_check_modules(SDL2_MIXER SDL2_mixer>=2.0.0)
-    if(NOT SDL2_MIXER_FOUND)
-        pkg_check_modules(SDL2_MIXER REQUIRED sdl2_mixer>=2.0.0)
+
+    if(SDL2_MIXER_INCLUDE_DIR AND SDL2_MIXER_LIBRARY)
+        set(SDL2_MIXER_FOUND TRUE)
+        set(SDL2_MIXER_INCLUDE_DIRS ${SDL2_MIXER_INCLUDE_DIR})
+        set(SDL2_MIXER_LIBRARIES ${SDL2_MIXER_LIBRARY})
+    else()
+        message(FATAL_ERROR "SDL2_mixer not found! Include: ${SDL2_MIXER_INCLUDE_DIR}, Lib: ${SDL2_MIXER_LIBRARY}")
     endif()
 
     # Create imported targets to satisfy target_link_libraries downstream
