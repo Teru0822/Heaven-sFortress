@@ -334,6 +334,17 @@ int main(int argc, char** argv)
 	setup_client(server_name, port);
 	std::cout << "setuped" << std::endl;
 
+	// Set Current Directory to executable path to ensure assets are found
+	char *base_path = SDL_GetBasePath();
+	if (base_path) {
+#ifdef _WIN32
+		SetCurrentDirectoryA(base_path);
+#else
+		chdir(base_path);
+#endif
+		SDL_free(base_path);
+	}
+
 	// Create SDL window with OpenGL context
 	SDL_DisplayMode displayMode;
 	if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) {
@@ -394,7 +405,7 @@ int main(int argc, char** argv)
 
     // BGMロード
     if ((BGM_title = Mix_LoadMUS("config/music/BGM_title.mp3")) == NULL) {
-        printf("failed to load music and chunk.\n");
+        printf("failed to load music (BGM_title): %s\n", Mix_GetError());
         Mix_CloseAudio(); // オーディオデバイスの終了
         SDL_Quit();
         exit(-1);
