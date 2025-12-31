@@ -41,6 +41,10 @@ jobs:
           find /usr/lib -name "libGL.so*" -o -name "libGLU.so*" -o -name "libGLEW.so*" -o -name "libSDL2.so*" -o -name "libglut.so*" 2>/dev/null || true
           echo "=== DEBUG: ldconfig cache ==="
           ldconfig -p | grep -E "(libGL|libGLU|libGLEW|libSDL2|libglut)" || true
+          echo "=== DEBUG: Verify critical libraries exist ==="
+          ls -la /usr/lib/x86_64-linux-gnu/libGL* || echo "No libGL found"
+          ls -la /usr/lib/x86_64-linux-gnu/libSDL2* || echo "No libSDL2 found"
+          ls -la /usr/lib/x86_64-linux-gnu/libGLEW* || echo "No libGLEW found"
           echo "PWD: $(pwd)"
 
       - name: Install dependencies (Windows)
