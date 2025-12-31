@@ -26,12 +26,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
-          echo "=== DEBUG: Finding glew.h ==="
-          find /usr/include -name "glew.h"
-          echo "=== DEBUG: pkg-config glew ==="
-          pkg-config --list-all | grep glew || echo "glew pkg-config not found"
-          echo "=== DEBUG: libglew-dev files ==="
-          dpkg -L libglew-dev || echo "libglew-dev not installed"
+          sudo apt-get install -y libsdl2-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libomp-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev pkg-config
+          # Validating and Fixing GLEW header missing issue
+          mkdir -p GL
+          wget https://raw.githubusercontent.com/nigels-com/glew/master/include/GL/glew.h -O GL/glew.h
+          ls -R GL
 
       - name: Install dependencies (Windows)
         if: matrix.os == 'windows-latest'
