@@ -30,16 +30,17 @@ if(WIN32)
     find_package(SDL2 CONFIG REQUIRED)
     find_package(SDL2_mixer CONFIG REQUIRED)
 else()
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(SDL2 REQUIRED sdl2 IMPORTED_TARGET)
-    pkg_check_modules(SDL2_mixer REQUIRED SDL2_mixer IMPORTED_TARGET)
-
-    if(NOT TARGET SDL2::SDL2)
-        add_library(SDL2::SDL2 ALIAS PkgConfig::SDL2)
-    endif()
-    if(NOT TARGET SDL2_mixer::SDL2_mixer)
-        add_library(SDL2_mixer::SDL2_mixer ALIAS PkgConfig::SDL2_mixer)
-    endif()
+    # Manual fallback for Linux: directly link standard SDL2 libraries
+    message(STATUS "Using generic SDL2 libraries for Linux")
+    set(SDL2_LIBRARIES SDL2)
+    set(SDL2_MIXER_LIBRARIES SDL2_mixer)
+    
+    # Create imported targets to satisfy target_link_libraries downstream
+    add_library(SDL2::SDL2 INTERFACE IMPORTED)
+    target_link_libraries(SDL2::SDL2 INTERFACE SDL2)
+    
+    add_library(SDL2_mixer::SDL2_mixer INTERFACE IMPORTED)
+    target_link_libraries(SDL2_mixer::SDL2_mixer INTERFACE SDL2_mixer)
 endif()
 if(WIN32)
     add_definitions(-DWIN32_LEAN_AND_MEAN -DNOMINMAX)
