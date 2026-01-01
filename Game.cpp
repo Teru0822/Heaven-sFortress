@@ -374,6 +374,9 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
+	// VSync を有効化してCPU使用率を削減
+	SDL_GL_SetSwapInterval(1); // 1 = VSync有効, 0 = VSync無効
+
 	renderer = SDL_CreateRenderer(window, -1, 0);
 	bool running = true;
 
@@ -523,8 +526,9 @@ int main(int argc, char** argv)
 		SceneController();
 		SDL_GL_SwapWindow(window);
 		Uint32 frameTime = SDL_GetTicks() - frameStart;
-		if (frameTime < 1000 / 60) {
-			SDL_Delay(1000 / 60 - frameTime);
+		const int TARGET_FPS = 30; // 60から30に変更してCPU使用率を削減
+		if (frameTime < 1000 / TARGET_FPS) {
+			SDL_Delay(1000 / TARGET_FPS - frameTime);
 		}
 	}
 
