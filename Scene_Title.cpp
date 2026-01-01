@@ -23,7 +23,7 @@ extern obj door_right;
 
 void scene1(int x, int y, int w, int h)
 {
-	//�^�C�g�����
+	//タイトル画面
 	glViewport(x, y, w, h);
 	angle += 0.03;
 	double lpx = aincradRad * cosf(angle * PI / 180.0);
@@ -94,54 +94,47 @@ void scene1(int x, int y, int w, int h)
 
 void FireWork(FireWorksPos* centerPoints)
 {
+	static int frameSkip = 0;
+	frameSkip++;
+	
 	for (int t = 0; t < 20; t++)
 	{
 		if (centerPoints[t].random == true)
 		{
-			for (int i = 0; i < 18; i++)
+			// パーティクル数を18から9に削減（40度間隔）
+			// 種類を7から3に削減
+			for (int i = 0; i < 9; i++)
 			{
-				//�^��
+				// 赤丸
 				glPushMatrix();
-				glTranslatef(cosf(((i * 20) + 10) * M_PI / 180.0) * centerPoints[t].FireWorkCount / 8.5, sinf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 8.5, (0.27 * centerPoints[t].FireWorkCount) - (g * centerPoints[t].FireWorkCount * centerPoints[t].FireWorkCount / 40.0));
+				glTranslatef(cosf(i * 40 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 8.5, 
+				             sinf(i * 40 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 8.5, 
+				             (0.27 * centerPoints[t].FireWorkCount) - (g * centerPoints[t].FireWorkCount * centerPoints[t].FireWorkCount / 40.0));
 				glTranslatef(centerPoints[t].x, centerPoints[t].y, centerPoints[t].z);
-				FireWorks.make(sinf(i * 20 * M_PI / 180.0), cosf(i * 20 * M_PI / 180.0), 1);
+				FireWorks.make(sinf(i * 40 * M_PI / 180.0), cosf(i * 40 * M_PI / 180.0), 1);
 				glPopMatrix();
-				//�O�ԏ�
-				glPushMatrix();
-				glTranslatef(cosf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 9.5, sinf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 9.5, (0.3 * centerPoints[t].FireWorkCount) - (g * centerPoints[t].FireWorkCount * centerPoints[t].FireWorkCount / 40.0));
-				glTranslatef(centerPoints[t].x, centerPoints[t].y, centerPoints[t].z);
-				FireWorks.make(cosf(i * 20 * M_PI / 180.0), 1, sinf(i * 20 * M_PI / 180.0));
-				glPopMatrix();
-				//��ԏ�
-				glPushMatrix();
-				glTranslatef(cosf(((i * 20) + 10) * M_PI / 180.0) * centerPoints[t].FireWorkCount / 13.0, sinf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 13.0, (0.325 * centerPoints[t].FireWorkCount) - (g * centerPoints[t].FireWorkCount * centerPoints[t].FireWorkCount / 40.0));
-				glTranslatef(centerPoints[t].x, centerPoints[t].y, centerPoints[t].z);
-				FireWorks.make(sinf(i * 20 * M_PI / 180.0), 1, cosf(i * 20 * M_PI / 180.0));
-				glPopMatrix();
-				//��ԏ�
-				glPushMatrix();
-				glTranslatef(cosf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 29.0, sinf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 29.0, (0.34 * centerPoints[t].FireWorkCount) - (g * centerPoints[t].FireWorkCount * centerPoints[t].FireWorkCount / 40.0));
-				glTranslatef(centerPoints[t].x, centerPoints[t].y, centerPoints[t].z);
-				FireWorks.make(cosf(i * 20 * M_PI / 180.0), cosf(i * 20 * M_PI / 180.0), 1);
-				glPopMatrix();
-				//�O�ԉ�
-				glPushMatrix();
-				glTranslatef(cosf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 8.5, sinf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 8.5, (0.25 * centerPoints[t].FireWorkCount) - (g * centerPoints[t].FireWorkCount * centerPoints[t].FireWorkCount / 40.0));
-				glTranslatef(centerPoints[t].x, centerPoints[t].y, centerPoints[t].z);
-				FireWorks.make(cosf(i * 20 * M_PI / 180.0), cosf(i * 20 * M_PI / 180.0), 1);
-				glPopMatrix();
-				//��ԉ�
-				glPushMatrix();
-				glTranslatef(cosf(((i * 20) + 10) * M_PI / 180.0) * centerPoints[t].FireWorkCount / 10.0, sinf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 10.0, (0.23 * centerPoints[t].FireWorkCount) - (g * centerPoints[t].FireWorkCount * centerPoints[t].FireWorkCount / 40.0));
-				glTranslatef(centerPoints[t].x, centerPoints[t].y, centerPoints[t].z);
-				FireWorks.make(cosf(i * 20 * M_PI / 180.0), 1, sinf(i * 20 * M_PI / 180.0));
-				glPopMatrix();
-				//��ԉ�
-				glPushMatrix();
-				glTranslatef(cosf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 14.0, sinf(i * 20 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 14.0, (0.21 * centerPoints[t].FireWorkCount) - (g * centerPoints[t].FireWorkCount * centerPoints[t].FireWorkCount / 40.0));
-				glTranslatef(centerPoints[t].x, centerPoints[t].y, centerPoints[t].z);
-				FireWorks.make(sinf(i * 20 * M_PI / 180.0), 1, cosf(i * 20 * M_PI / 180.0));
-				glPopMatrix();
+				
+				// 緑丸（2フレームに1回のみ描画）
+				if (frameSkip % 2 == 0) {
+					glPushMatrix();
+					glTranslatef(cosf(i * 40 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 9.5, 
+					             sinf(i * 40 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 9.5, 
+					             (0.3 * centerPoints[t].FireWorkCount) - (g * centerPoints[t].FireWorkCount * centerPoints[t].FireWorkCount / 40.0));
+					glTranslatef(centerPoints[t].x, centerPoints[t].y, centerPoints[t].z);
+					FireWorks.make(cosf(i * 40 * M_PI / 180.0), 1, sinf(i * 40 * M_PI / 180.0));
+					glPopMatrix();
+				}
+				
+				// 青丸（2フレームに1回のみ描画）
+				if (frameSkip % 2 == 1) {
+					glPushMatrix();
+					glTranslatef(cosf(i * 40 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 13.0, 
+					             sinf(i * 40 * M_PI / 180.0) * centerPoints[t].FireWorkCount / 13.0, 
+					             (0.325 * centerPoints[t].FireWorkCount) - (g * centerPoints[t].FireWorkCount * centerPoints[t].FireWorkCount / 40.0));
+					glTranslatef(centerPoints[t].x, centerPoints[t].y, centerPoints[t].z);
+					FireWorks.make(sinf(i * 40 * M_PI / 180.0), 1, cosf(i * 40 * M_PI / 180.0));
+					glPopMatrix();
+				}
 			}
 			centerPoints[t].FireWorkCount += 5;
 		}

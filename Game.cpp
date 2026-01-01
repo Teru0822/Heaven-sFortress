@@ -526,7 +526,7 @@ int main(int argc, char** argv)
 		SceneController();
 		SDL_GL_SwapWindow(window);
 		Uint32 frameTime = SDL_GetTicks() - frameStart;
-		const int TARGET_FPS = 30; // 60から30に変更してCPU使用率を削減
+		const int TARGET_FPS = 60; // FireWork最適化により60 FPSに戻す
 		if (frameTime < 1000 / TARGET_FPS) {
 			SDL_Delay(1000 / TARGET_FPS - frameTime);
 		}
